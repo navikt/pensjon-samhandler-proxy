@@ -33,7 +33,8 @@ class ConsPenAppJmsConfiguration {
         @Value("\${mqGateway01.hostname}") hostName: String,
         @Value("\${mqGateway01.queueManager}") queueManager: String,
         @Value("\${mqGateway01.channel}") channel: String,
-        @Value("\${mqGateway01.port}") port: Int
+        @Value("\${mqGateway01.port}") port: Int,
+        @Value("\${mqGateway01.temporaryModel}") temporaryModel: String,
     ): ConnectionFactory {
         return CachingConnectionFactory(UserCredentialsConnectionFactoryAdapter().apply {
             setTargetConnectionFactory(MQQueueConnectionFactory().also {
@@ -42,6 +43,7 @@ class ConsPenAppJmsConfiguration {
                 it.channel = channel
                 it.port = port
                 it.transportType = WMQConstants.WMQ_CM_CLIENT
+                it.temporaryModel = "DEV.APP.MODEL.QUEUE"
             })
             setUsername(username)
             setPassword(password)

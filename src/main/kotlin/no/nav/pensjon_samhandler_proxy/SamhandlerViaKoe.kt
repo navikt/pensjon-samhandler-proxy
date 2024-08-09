@@ -118,7 +118,7 @@ class SamhandlerViaKoe(
         val text = (message as? TextMessage)?.text
         if (text.isNullOrEmpty()) {
             println("Tomt svar")
-            throw RuntimeException("Feil ved kall mot TSS")
+            throw IkkeSvarFraTssException()
         } else {
             val unmarshaller = context.createUnmarshaller()
             val xmlInputFactory: XMLInputFactory = XMLInputFactory.newInstance()
