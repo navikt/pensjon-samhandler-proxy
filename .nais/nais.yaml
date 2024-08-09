@@ -1,0 +1,57 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ app.name }}
+  namespace: {{ app.namespace }}
+  labels:
+    team: {{ app.team }}
+spec:
+  image: {{ image }}
+  port: 8080
+  liveness:
+    path: actuator/health/liveness
+    initialDelay: 5
+  readiness:
+    path: actuator/health/readiness
+    initialDelay: 5
+  startup:
+    path: actuator/health/readiness
+    initialDelay: 5
+    failureThreshold: 30
+    periodSeconds: 1
+  replicas:
+    min: 2
+    max: 2
+    cpuThresholdPercentage: 75
+  resources:
+    limits:
+      memory: 1024Mi
+    requests:
+      cpu: 40m
+      memory: 384Mi
+  ingresses:
+    - {{app.ingress}}
+  azure:
+    application:
+      enabled: true
+  webproxy: true
+  env:
+    - name: "ENVIRONMENT_NAME"
+      value: {{ app.env }}
+    - name: "OTEL_EXPORTER_OTLP_ENDPOINT"
+      value: "https://elastic-apm.adeo.no"
+    - name: "OTEL_METRICS_EXPORTER"
+      value: "otlp"
+    - name: "OTEL_LOGS_EXPORTER"
+      value: "{{otel.logs}}"
+    - name: "OTEL_RESOURCE_ATTRIBUTES"
+      value: "service.name=pensjon-samhandler-proxy,service.version={{version}},deployment.environment={{app.env}}"
+    - name: "OTEL_TRACES_EXPORTER"
+      value: "otlp"
+    - name: SPRING_PROFILES_ACTIVE
+      value: {{ app.profile }}
+  vault:
+    enabled: true
+    paths:
+      - kvPath: "{{vault.srvpenmq}}"
+        mountPath: "/secrets/srvpenmq"

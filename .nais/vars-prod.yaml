@@ -1,0 +1,13 @@
+app:
+  name: 'pensjon-samhandler-proxy'
+  namespace: 'pensjondeployer'
+  team: 'pensjondeployer'
+  ingress: 'https://pensjon-samhandler-proxy.intern.nav.no'
+  env: p
+  profile: p
+
+otel:
+  logs: none
+
+vault:
+  srvpenmq: 'serviceuser/data/prod/srvpenmq'
