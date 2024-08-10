@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>
+                {
+                    "applicationVersion": "@project.version@"
+                }
+            </customFields>
+
+            <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                <maxDepthPerThrowable>50</maxDepthPerThrowable>
+                <exclude>java\.util\.concurrent\..*</exclude>
+                <exclude>org\.apache\.tomcat\..*</exclude>
+                <exclude>org\.apache\.coyote\..*</exclude>
+                <exclude>org\.apache\.catalina\..*</exclude>
+            </throwableConverter>
+
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

@@ -9,6 +9,7 @@ WORKDIR /app
 
 RUN curl -L -O https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar
 
+ENV LOGGING_CONFIG=classpath:logback-nais.xml
 ENV MAIN_CLASS=no.nav.pensjon_samhandler_proxy.PensjonSamhandlerProxyApplication
 ENV TZ="Europe/Oslo"
 
