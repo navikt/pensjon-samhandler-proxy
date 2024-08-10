@@ -1,7 +1,6 @@
 package no.nav.pensjon_samhandler_proxy
 
 import no.nav.freg.tss.*
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
 import java.io.ByteArrayOutputStream
