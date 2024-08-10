@@ -22,6 +22,11 @@ import java.time.Duration.ofMinutes
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
     classes = [PensjonSamhandlerProxyApplication::class],
+    properties = [
+        "management.health.livenessstate.enabled=true",
+        "management.health.readinessstate.enabled=true",
+        "management.endpoint.health.probes.enabled=true",
+    ]
 )
 @ContextConfiguration(
     initializers = [
@@ -38,6 +43,21 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
     @Test
     fun kallTilTssFeilerMedManglendeSvar() {
         assertThrows<IkkeSvarFraTssException> { samhandlerViaKoe.hentSamhandlerXml("123", false) }
+    }
+
+    @Test
+    fun `actuator health prober kan kalles uten token`() {
+        webClient.get()
+            .uri("/actuator/health/liveness")
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+
+        webClient.get()
+            .uri("/actuator/health/readiness")
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
     }
 
     @Test
