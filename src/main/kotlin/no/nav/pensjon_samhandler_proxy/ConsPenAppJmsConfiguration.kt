@@ -43,7 +43,7 @@ class ConsPenAppJmsConfiguration {
                 it.channel = channel
                 it.port = port
                 it.transportType = WMQConstants.WMQ_CM_CLIENT
-                it.temporaryModel = "DEV.APP.MODEL.QUEUE"
+                it.temporaryModel = temporaryModel
             })
             setUsername(username)
             setPassword(password)
