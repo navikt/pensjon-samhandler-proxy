@@ -11,3 +11,14 @@ otel:
 
 vault:
   srvpenmq: 'serviceuser/data/dev/srvpenmq'
+
+inboundRules:
+  - application: "azure-token-generator"
+    namespace: "aura"
+    cluster: "dev-gcp"
+  - application: "pensjon-psak-q2"
+    namespace: "pensjon-q2"
+    cluster: "dev-gcp"
+  - application: "pensjon-psak-q2"
+    namespace: "pensjon-q2"
+    cluster: "dev-fss"

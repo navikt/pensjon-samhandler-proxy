@@ -34,6 +34,14 @@ spec:
   azure:
     application:
       enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+      {{#each inboundRules as |rule|}}
+        - application: {{rule.application}}
+          namespace: {{rule.namespace}}
+          cluster: {{rule.cluster}}
+      {{/each}}
   webproxy: true
   env:
     - name: "ENVIRONMENT_NAME"

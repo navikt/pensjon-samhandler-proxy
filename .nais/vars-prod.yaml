@@ -11,3 +11,8 @@ otel:
 
 vault:
   srvpenmq: 'serviceuser/data/prod/srvpenmq'
+
+inboundRules:
+  - application: "pensjon-psak"
+    namespace: "pensjondeployer"
+    cluster: "prod-fss"
