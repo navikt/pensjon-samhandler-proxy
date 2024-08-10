@@ -15,7 +15,7 @@ import javax.xml.transform.stream.StreamSource
 
 @Component
 class SamhandlerViaKoe(
-    @Qualifier("samhandlerXmlJmsTemplate") private val xmlJmsTemplate: JmsTemplate,
+    private val xmlJmsTemplate: JmsTemplate,
 ) {
     fun hentSamhandlerXml(tssId: String, detaljert: Boolean): TOutputElementer? {
         return if (detaljert) {

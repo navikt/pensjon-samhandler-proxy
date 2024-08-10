@@ -12,7 +12,6 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableWebSecurity
 class SpringSecurityConfig {
     @Bean
-    @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http {
             authorizeHttpRequests {

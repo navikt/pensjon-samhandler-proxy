@@ -120,15 +120,15 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
         @DynamicPropertySource
         @JvmStatic
         fun mqProperties(registry: DynamicPropertyRegistry) {
-            registry.add("mqGateway01.hostname") { mq.host }
-            registry.add("mqGateway01.queueManager") { "QM1" }
-            registry.add("mqGateway01.channel") { "DEV.APP.SVRCONN" }
-            registry.add("mqGateway01.port") { mq.getMappedPort(1414) }
-            registry.add("mqGateway01.temporaryModel") { "DEV.APP.MODEL.QUEUE" }
+            registry.add("ibm.mq.channel") { "DEV.APP.SVRCONN" }
+            registry.add("ibm.mq.connName") { "${mq.host}(${mq.getMappedPort(1414)})" }
+            registry.add("ibm.mq.queueManager") { "QM1" }
+            registry.add("ibm.mq.tempModel") { "DEV.APP.MODEL.QUEUE" }
+
+            registry.add("ibm.mq.user") { "app" }
+            registry.add("ibm.mq.password") { "passw0rd" }
+
             registry.add("samhandler.xml.queueName") { "DEV.QUEUE.1" }
-            registry.add("SRVPENMQ_USERNAME") { "app" }
-            registry.add("SRVPENMQ_PASSWORD") { "passw0rd" }
         }
     }
-
 }
