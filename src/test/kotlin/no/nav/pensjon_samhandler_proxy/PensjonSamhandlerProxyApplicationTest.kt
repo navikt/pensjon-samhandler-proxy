@@ -7,6 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.jms.core.JmsTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -18,6 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
 import java.time.Duration
 import java.time.Duration.ofMinutes
+import kotlin.concurrent.thread
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
@@ -39,6 +41,7 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
     val samhandlerViaKoe: SamhandlerViaKoe,
     val mockOAuth2Server: MockOAuth2Server,
     val webClient: WebTestClient,
+    val jmsTemplate: JmsTemplate,
 ) {
     @Test
     fun kallTilTssFeilerMedManglendeSvar() {
@@ -86,7 +89,9 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
     }
 
     @Test
-    fun `kall med gyldig token gir ikke 401`() {
+    fun `kall med gyldig token gir ikke 200`() {
+        val listnerThread = lagListener()
+
         val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
         webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
             .get()
@@ -98,8 +103,54 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
             }
             .exchange()
             .expectStatus()
-            .is5xxServerError()
+            .is2xxSuccessful()
+
+        listnerThread.interrupt()
     }
+
+    private fun lagListener() =
+        thread {
+            val message = jmsTemplate.receive("DEV.QUEUE.1")!!
+
+            jmsTemplate.send(message.jmsReplyTo) {
+                it.createTextMessage(
+                    """
+                        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                        <tssSamhandlerData xmlns="http://www.rtv.no/NamespaceTSS">
+                            <tssInputData>
+                                <tssServiceRutine>
+                                    <samhandlerIDataB980>
+                                        <idOffTSS>80000748058</idOffTSS>
+                                        <hentNavn>J</hentNavn>
+                                        <brukerID>PP01</brukerID>
+                                    </samhandlerIDataB980>
+                                </tssServiceRutine>
+                            </tssInputData>
+                            <tssOutputData>
+                                <svarStatus>
+                                    <alvorligGrad>00</alvorligGrad>
+                                    <kodeMelding></kodeMelding>
+                                    <beskrMelding></beskrMelding>
+                                </svarStatus>
+                                <samhandlerODataB980>
+                                    <antIdenter>1</antIdenter>
+                                    <ident>
+                                        <idOff>3943</idOff>
+                                        <kodeIdentType>TPNR</kodeIdentType>
+                                        <kodeSamhType>TEPE</kodeSamhType>
+                                        <navnSamh>SKAGERAK ENERGI PENSJONSKASSE</navnSamh>
+                                        <avdelingsNr>01</avdelingsNr>
+                                        <offNrAvd></offNrAvd>
+                                        <avdelingsNavn>Skagerak Energi pensjonskasse</avdelingsNavn>
+                                        <idOffTSS>80000748058</idOffTSS>
+                                    </ident>
+                                </samhandlerODataB980>
+                            </tssOutputData>
+                        </tssSamhandlerData>
+                    """.trimIndent()
+                )
+            }
+        }
 
     companion object {
         @Container
