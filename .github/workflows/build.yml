@@ -95,25 +95,25 @@ jobs:
           image_ref: ${{ steps.login.outputs.registry }}/${{ github.repository }}/pensjon-samhandler-proxy:@${{ steps.build_push.outputs.digest }}
           sbom: "trivy-results.cyclonedx"
 
-#  deploy:
-#    if: github.ref == 'refs/heads/main'
-#    permissions:
-#      contents: read
-#      id-token: write
-#    needs: [build]
-#    runs-on: 'ubuntu-latest'
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: nais/deploy/actions/deploy@v2
-#        env:
-#          IMAGE: "${{ needs.build.outputs.image }}"
-#          RESOURCE: .nais/nais.yaml
-#          CLUSTER: 'prod-fss'
-#          VAR: "version=${{ needs.build.outputs.version }}"
-#          VARS: '.nais/vars-prod.yaml'
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+    needs: [build]
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          IMAGE: "${{ needs.build.outputs.image }}"
+          RESOURCE: .nais/nais.yaml
+          CLUSTER: 'prod-fss'
+          VAR: "version=${{ needs.build.outputs.version }}"
+          VARS: '.nais/vars-prod.yaml'
 
   deploySandbox:
-#    if: github.ref == 'refs/heads/sandbox'
+    if: github.ref == 'refs/heads/sandbox'
     permissions:
       contents: read
       id-token: write
@@ -123,8 +123,32 @@ jobs:
     strategy:
       matrix:
         include:
-#          - env: q1
+          - env: q1
           - env: q2
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: nais/deploy/actions/deploy@v2
+        env:
+          IMAGE: "${{ needs.build.outputs.image }}"
+          RESOURCE: .nais/nais.yaml
+          CLUSTER: 'dev-fss'
+          VAR: "version=${{ needs.build.outputs.version }}"
+          VARS: '.nais/vars-dev-${{matrix.env}}.yaml'
+
+  deployQ0andQ5:
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      id-token: write
+    needs: [build]
+    runs-on: 'ubuntu-latest'
+
+    strategy:
+      matrix:
+        include:
+          - env: q0
+          - env: q5
 
     steps:
       - uses: actions/checkout@v4
