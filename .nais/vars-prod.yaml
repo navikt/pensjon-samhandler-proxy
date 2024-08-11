@@ -2,9 +2,12 @@ app:
   name: 'pensjon-samhandler-proxy'
   namespace: 'pensjondeployer'
   team: 'pensjondeployer'
-  ingress: 'https://pensjon-samhandler-proxy.intern.nav.no'
   env: p
   profile: p
+
+ingresses:
+  - 'https://pensjon-samhandler-proxy.intern.nav.no'
+  - "https://pensjon-samhandler-proxy.prod-fss-pub.nais.io"
 
 otel:
   logs: none

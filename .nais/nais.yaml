@@ -30,7 +30,9 @@ spec:
       cpu: 40m
       memory: 384Mi
   ingresses:
-    - {{app.ingress}}
+  {{#each ingresses as |ingress|}}
+     - {{ingress}}
+  {{/each}}
   azure:
     application:
       enabled: true

@@ -2,9 +2,12 @@ app:
   name: 'pensjon-samhandler-proxy-q2'
   namespace: 'pensjon-q2'
   team: 'pensjon-q2'
-  ingress: 'https://pensjon-samhandler-proxy-q2.intern.dev.nav.no'
   env: q2
   profile: q2
+
+ingresses:
+  - 'https://pensjon-samhandler-proxy-q2.intern.dev.nav.no'
+  - "https://pensjon-samhandler-proxy-q2.dev-fss-pub.nais.io"
 
 otel:
   logs: otlp
