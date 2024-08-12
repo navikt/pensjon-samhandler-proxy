@@ -28,6 +28,9 @@ class SamhandlerController(
         )
     }
 
+    @GetMapping("/ping")
+    fun ping() = "PONG"
+
     data class Soek(
         val navn: String?,
         val samhandlerType: String?,
