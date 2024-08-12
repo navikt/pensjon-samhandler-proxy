@@ -16,6 +16,9 @@ vault:
   srvpenmq: 'serviceuser/data/dev/srvpenmq'
 
 inboundRules:
+  - application: "pensjon-pen-q1"
+    namespace: "pensjon-q1"
+    cluster: "dev-fss"
   - application: "pensjon-psak-q1"
     namespace: "pensjon-q1"
     cluster: "dev-fss"
