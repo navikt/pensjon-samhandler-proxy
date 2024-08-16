@@ -45,7 +45,7 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
 ) {
     @Test
     fun kallTilTssFeilerMedManglendeSvar() {
-        assertThrows<IkkeSvarFraTssException> { samhandlerViaKoe.hentSamhandlerXml("123", false) }
+        assertThrows<IkkeSvarFraTssException> { samhandlerViaKoe.hentSamhandlerEnkel("123") }
     }
 
     @Test

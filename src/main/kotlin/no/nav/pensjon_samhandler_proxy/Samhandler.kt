@@ -9,6 +9,13 @@ data class Samhandler(
     val avdelinger: List<Avdeling>?,
 )
 
+data class SamhandlerEnkel(
+    val navn: String?,
+    val samhandlerType: String?,
+    val offentligId: String?,
+    val idType: String?,
+)
+
 data class Avdeling(
     val idTSSEkstern: String?,
     val avdelingNavn: String?,
