@@ -5,21 +5,21 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(path = ["/api/samhandler"])
 class SamhandlerController(
-    private val samhandlerViaKoe: SamhandlerViaKoe,
+    private val samhandlerService: SamhandlerService,
 ) {
     @GetMapping("/hentSamhandler/{tssId}")
     fun hentSamhandler(@PathVariable("tssId") tssId: String): Samhandler? {
-        return samhandlerViaKoe.hentSamhandler(tssId)
+        return samhandlerService.hentSamhandler(tssId)
     }
 
     @GetMapping("/hentSamhandlerEnkel/{tssId}")
     fun hentSamhandlerEnkel(@PathVariable("tssId") tssId: String): SamhandlerEnkel? {
-        return samhandlerViaKoe.hentSamhandlerEnkel(tssId)
+        return samhandlerService.hentSamhandlerEnkel(tssId)
     }
 
     @PostMapping("/finnSamhandler")
     fun finnSamhandler(@RequestBody soek: Soek): List<Samhandler> {
-        return samhandlerViaKoe.finnSamhandler(
+        return samhandlerService.finnSamhandler(
             soek.navn?.takeIf { it.isNotBlank() },
             soek.idType?.takeIf { it.isNotBlank() },
             soek.offentligId?.takeIf { it.isNotBlank() },

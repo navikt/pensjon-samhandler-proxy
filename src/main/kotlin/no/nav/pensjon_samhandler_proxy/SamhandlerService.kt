@@ -13,7 +13,7 @@ import javax.xml.stream.XMLInputFactory
 import javax.xml.transform.stream.StreamSource
 
 @Component
-class SamhandlerViaKoe(
+class SamhandlerService(
     private val xmlJmsTemplate: JmsTemplate,
 ) {
     fun hentSamhandler(tssId: String): Samhandler? {
