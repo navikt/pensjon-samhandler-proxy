@@ -35,6 +35,7 @@ spec:
   {{/each}}
   azure:
     application:
+      allowAllUsers: true
       enabled: true
   accessPolicy:
     inbound:
