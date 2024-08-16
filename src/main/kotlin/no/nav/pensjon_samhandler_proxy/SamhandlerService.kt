@@ -106,12 +106,10 @@ class SamhandlerService(
         val document = baos.toString(java.nio.charset.StandardCharsets.UTF_8)
 
         val message: Message? = xmlJmsTemplate.sendAndReceive {
-            println(document)
             it.createTextMessage(document)
         }
         val text = (message as? TextMessage)?.text
         if (text.isNullOrEmpty()) {
-            println("Tomt svar")
             throw IkkeSvarFraTssException()
         } else {
             val unmarshaller = context.createUnmarshaller()
