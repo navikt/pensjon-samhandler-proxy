@@ -38,14 +38,14 @@ import kotlin.concurrent.thread
 @Testcontainers
 @Disabled("Avklar om vi har lisens til å kjøre MQ dev container på GitHub, hvis ikke så kan dette kun kjøres på utviklermaskin")
 class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
-    val samhandlerViaKoe: SamhandlerViaKoe,
+    val samhandlerService: SamhandlerService,
     val mockOAuth2Server: MockOAuth2Server,
     val webClient: WebTestClient,
     val jmsTemplate: JmsTemplate,
 ) {
     @Test
     fun kallTilTssFeilerMedManglendeSvar() {
-        assertThrows<IkkeSvarFraTssException> { samhandlerViaKoe.hentSamhandlerEnkel("123") }
+        assertThrows<IkkeSvarFraTssException> { samhandlerService.hentSamhandlerEnkel("123") }
     }
 
     @Test
