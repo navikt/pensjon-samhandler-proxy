@@ -16,109 +16,83 @@ import javax.xml.transform.stream.StreamSource
 class SamhandlerViaKoe(
     private val xmlJmsTemplate: JmsTemplate,
 ) {
-    fun hentSamhandlerXml(tssId: String, detaljert: Boolean): Samhandler? {
-        return if (detaljert) {
-            hentSamhandlerXmlRaw(tssId, detaljert)?.samhandlerODataB910?.enkeltSamhandler?.first()?.toSamhandler()
-        } else {
-            hentSamhandlerXmlRaw(tssId, detaljert)?.samhandlerODataB980?.ident?.first()?.toSamhandler()
-        }
+    fun hentSamhandler(tssId: String): Samhandler? {
+        return kallSamhandler {
+            samhandlerIDataB910 = SamhandlerIDataB910Type().apply {
+                idOffTSS = tssId
+                brukerID = "PP01"
+            }
+        }?.samhandlerODataB910?.enkeltSamhandler?.first()?.toSamhandler()
     }
 
-    fun hentSamhandlerXmlRaw(tssId: String, detaljert: Boolean): TOutputElementer? {
-        return if (detaljert) {
-            kallSamhandlerXml(TssSamhandlerData().apply {
-                tssInputData = TssSamhandlerData.TssInputData().apply {
-                    tssServiceRutine = TServicerutiner().apply {
-                        samhandlerIDataB910 = SamhandlerIDataB910Type().apply {
-                            idOffTSS = tssId
-                            brukerID = "PP01"
-                        }
-                    }
-                }
-            })
-        } else {
-            kallSamhandlerXml(TssSamhandlerData().apply {
-                tssInputData = TssSamhandlerData.TssInputData().apply {
-                    tssServiceRutine = TServicerutiner().apply {
-                        samhandlerIDataB980 = SamhandlerIDataB980Type().apply {
-                            idOffTSS = tssId
-                            hentNavn = "J"
-                            brukerID = "PP01"
-                        }
-                    }
-                }
-            })
-        }
+    fun hentSamhandlerEnkel(tssId: String): SamhandlerEnkel? {
+        return kallSamhandler {
+            samhandlerIDataB980 = SamhandlerIDataB980Type().apply {
+                idOffTSS = tssId
+                hentNavn = "J"
+                brukerID = "PP01"
+            }
+        }?.samhandlerODataB980?.ident?.first()?.toSamhandlerEnkel()
     }
 
-    fun finnSamhandlerXml(navn: String?, idType: String?, offentligId: String?, samhandlerType: String?): List<Samhandler> {
-        return if ((navn?.isNotBlank() == true) && idType.isNullOrBlank() && offentligId.isNullOrBlank()) {
-            finnSamhandlerXmlRaw(navn, idType, offentligId, samhandlerType)?.samhandlerODataB98A?.ident?.map { it.toSamhandler() } ?: emptyList()
-        } else if (((idType?.isNotBlank() == true) && (offentligId?.isNotBlank() == true)) && navn.isNullOrBlank()) {
-            finnSamhandlerXmlRaw(navn, idType, offentligId, samhandlerType)?.samhandlerODataB910?.enkeltSamhandler?.map { it.toSamhandler() } ?: emptyList()
-        } else if ((idType.isNullOrBlank() && offentligId.isNullOrBlank()) && navn.isNullOrBlank() && (samhandlerType?.isNotBlank() == true)) {
-            finnSamhandlerXmlRaw(navn, idType, offentligId, samhandlerType)?.samhandlerODataB940?.enkeltSamhandler?.map { it.toSamhandler() } ?: emptyList()
-        } else {
-            //Ugyldig input. Kast exception
-            throw RuntimeException("Ugyldig input")
-        }
-    }
-
-    fun finnSamhandlerXmlRaw(navn: String?, idType: String?, offentligId: String?, samhandlerType: String?): TOutputElementer? {
-        return if ((navn?.isNotBlank() == true) && idType.isNullOrBlank() && offentligId.isNullOrBlank()) {
-            kallSamhandlerXml(TssSamhandlerData().apply {
-                tssInputData = TssSamhandlerData.TssInputData().apply {
-                    tssServiceRutine = TServicerutiner().apply {
-                        samhandlerIDataB98A = SamhandlerIDataB98AType().apply {
-                            navnSamh = navn
-                            kodeSamhType = samhandlerType
-                            delNavn = "N"
-                            brukerID = "PP01"
-                            aksjonsKode = "A"
-                            aksjonsKode2 = "0"
-                        }
-                    }
+    fun finnSamhandler(
+        navn: String?,
+        idType: String?,
+        offentligId: String?,
+        samhandlerType: String?
+    ): List<Samhandler> {
+        return if (navn != null && idType == null && offentligId == null) {
+            kallSamhandler {
+                samhandlerIDataB98A = SamhandlerIDataB98AType().apply {
+                    navnSamh = navn
+                    kodeSamhType = samhandlerType
+                    delNavn = "N"
+                    brukerID = "PP01"
+                    aksjonsKode = "A"
+                    aksjonsKode2 = "0"
                 }
-            })
+            }?.samhandlerODataB98A?.ident?.map { it.toSamhandler() } ?: emptyList()
 
-        } else if (((idType?.isNotBlank() == true) && (offentligId?.isNotBlank() == true)) && navn.isNullOrBlank()) {
+        } else if (idType != null && offentligId != null && navn == null) {
             //Søke på offentligId og type. Kall hentSamhandler
-
-            kallSamhandlerXml(TssSamhandlerData().apply {
-                tssInputData = TssSamhandlerData.TssInputData().apply {
-                    tssServiceRutine = TServicerutiner().apply {
-                        samhandlerIDataB910 = SamhandlerIDataB910Type().apply {
-                            this.ofFid = TidOFF1().apply {
-                                idOff = offentligId
-                                kodeIdType = idType
-                                kodeSamhType = samhandlerType
-                            }
-                            brukerID = "PP01"
-                        }
+            kallSamhandler {
+                samhandlerIDataB910 = SamhandlerIDataB910Type().apply {
+                    ofFid = TidOFF1().apply {
+                        idOff = offentligId
+                        kodeIdType = idType
+                        kodeSamhType = samhandlerType
                     }
+                    brukerID = "PP01"
                 }
-            })
+            }?.samhandlerODataB910?.enkeltSamhandler?.map { it.toSamhandler() } ?: emptyList()
 
-        } else if ((idType.isNullOrBlank() && offentligId.isNullOrBlank()) && navn.isNullOrBlank() && (samhandlerType?.isNotBlank() == true)) {
+        } else if (idType == null && offentligId == null && navn == null && samhandlerType != null) {
             //search in TSS, only with samhandlerType as input
-
-            kallSamhandlerXml(TssSamhandlerData().apply {
-                tssInputData = TssSamhandlerData.TssInputData().apply {
-                    tssServiceRutine = TServicerutiner().apply {
-                        samhandlerIDataB940 = SamhandlerIDataB940Type().apply {
-                            kodeSamhType = samhandlerType
-                            brukerID = "PP01"
-                        }
-                    }
+            kallSamhandler {
+                samhandlerIDataB940 = SamhandlerIDataB940Type().apply {
+                    kodeSamhType = samhandlerType
+                    brukerID = "PP01"
                 }
-            })
+            }?.samhandlerODataB940?.enkeltSamhandler?.map { it.toSamhandler() } ?: emptyList()
         } else {
             //Ugyldig input. Kast exception
             throw RuntimeException("Ugyldig input")
         }
     }
 
-    private fun kallSamhandlerXml(tssSamhandlerData: TssSamhandlerData): TOutputElementer? {
+    private fun kallSamhandler(block: TServicerutiner.() -> Unit): TOutputElementer? {
+        return kallSamhandler(
+            TssSamhandlerData().apply {
+                tssInputData = TssSamhandlerData.TssInputData().apply {
+                    tssServiceRutine = TServicerutiner().apply {
+                        this.block()
+                    }
+                }
+            }
+        )
+    }
+
+    private fun kallSamhandler(tssSamhandlerData: TssSamhandlerData): TOutputElementer? {
         val context: JAXBContext = JAXBContext.newInstance(
             TssSamhandlerData::class.java,
         )
@@ -144,7 +118,18 @@ class SamhandlerViaKoe(
             val xmlInputFactory: XMLInputFactory = XMLInputFactory.newInstance()
 
 
-            val unmarshal = unmarshaller.unmarshal(xmlInputFactory.createXMLStreamReader(StreamSource(StringReader(text.replace("samhandlerODataB982", "samhandlerODataB98A")))), TssSamhandlerData::class.java)
+            val unmarshal = unmarshaller.unmarshal(
+                xmlInputFactory.createXMLStreamReader(
+                    StreamSource(
+                        StringReader(
+                            text.replace(
+                                "samhandlerODataB982",
+                                "samhandlerODataB98A"
+                            )
+                        )
+                    )
+                ), TssSamhandlerData::class.java
+            )
             return unmarshal.value.tssOutputData
         }
     }
@@ -156,21 +141,23 @@ class SamhandlerViaKoe(
             samhandlerType = samhandler110?.samhandler?.first()?.kodeSamhType,
             offentligId = samhandler110?.samhandler?.first()?.idOff,
             idType = samhandler110?.samhandler?.first()?.kodeIdentType,
-            avdelinger = samhandlerAvd125?.samhAvd?.map { mapToAvdeling(it, this.adresse130, this.konto140, this.kontakter150) },
+            avdelinger = samhandlerAvd125?.samhAvd?.map {
+                mapToAvdeling(
+                    it,
+                    this.adresse130,
+                    this.konto140,
+                    this.kontakter150
+                )
+            },
         )
     }
 
-    fun IdentOffEks.toSamhandler(): Samhandler {
-        return Samhandler(
+    fun IdentOffEks.toSamhandlerEnkel(): SamhandlerEnkel {
+        return SamhandlerEnkel(
             offentligId = idOff,
             idType = kodeIdentType,
             samhandlerType = kodeSamhType,
             navn = navnSamh,
-            avdelinger = listOf(Avdeling(
-                avdelingNavn = avdelingsNavn?.trim(),
-                avdelingsnr = avdelingsNr,
-                idTSSEkstern = idOffTSS,
-                )),
         )
     }
 
@@ -180,12 +167,14 @@ class SamhandlerViaKoe(
             idType = kodeIdentType,
             samhandlerType = kodeSamhType,
             navn = navnSamh,
-            avdelinger = listOf(Avdeling(
-                avdelingNavn = avdelingsNavn?.trim(),
-                avdelingType = avdelingsType?.trim(),
-                avdelingsnr = avdelingsNr,
-                idTSSEkstern = idOffTSS,
-            ))
+            avdelinger = listOf(
+                Avdeling(
+                    avdelingNavn = avdelingsNavn?.trim(),
+                    avdelingType = avdelingsType?.trim(),
+                    avdelingsnr = avdelingsNr,
+                    idTSSEkstern = idOffTSS,
+                )
+            )
         )
     }
 
@@ -196,24 +185,39 @@ class SamhandlerViaKoe(
             samhandlerType = samhandler110?.samhandler?.first()?.kodeSamhType,
             offentligId = samhandler110?.samhandler?.first()?.idOff,
             idType = samhandler110?.samhandler?.first()?.kodeIdentType,
-            avdelinger = samhandlerAvd125?.samhAvd?.map { mapToAvdeling(it, this.adresse130, null, null) },
+            avdelinger = samhandlerAvd125?.samhAvd?.map {
+                mapToAvdeling(
+                    it,
+                    this.adresse130,
+                    null,
+                    null,
+                )
+            },
         )
     }
 
-    private fun mapToAvdeling(avdelingDto: SamhAvdPraType, adresse130: TypeSamhAdr?, konto140: TypeSamhKonto?, kontakter150: TypeSamhKontakt?): Avdeling {
+    private fun mapToAvdeling(
+        avdeling: SamhAvdPraType,
+        alleAdresser: TypeSamhAdr?,
+        alleKontoer: TypeSamhKonto?,
+        alleKontakter: TypeSamhKontakt?
+    ): Avdeling {
+        val adresser = alleAdresser?.adresseSamh?.filter { it.avdNr == avdeling.avdNr }.orEmpty()
+        val kontoer = alleKontoer?.konto?.filter { it.avdNr == avdeling.avdNr }.orEmpty()
+        val kontakter = alleKontakter?.enKontakt?.filter { it.avdNr == avdeling.avdNr }.orEmpty()
         return Avdeling(
-            idTSSEkstern = avdelingDto.idOffTSS,
-            avdelingNavn = avdelingDto.avdNavn?.trim(),
-            avdelingType = avdelingDto.typeAvd?.trim(),
-            avdelingsnr = avdelingDto.avdNr,
-            pAdresse = adresse130?.adresseSamh?.firstOrNull { it.avdNr == avdelingDto.avdNr && it.kodeAdresseType == "PST" }?.asAdresse(),
-            aAdresse = adresse130?.adresseSamh?.firstOrNull { it.avdNr == avdelingDto.avdNr && it.kodeAdresseType == "WP" }?.asAdresse(),
-            tAdresse = adresse130?.adresseSamh?.firstOrNull { it.avdNr == avdelingDto.avdNr && it.kodeAdresseType == "TILL" }?.asAdresse(),
-            uAdresse = adresse130?.adresseSamh?.firstOrNull { it.avdNr == avdelingDto.avdNr && it.kodeAdresseType == "UTL" }?.asAdresse(),
-            kontoer = konto140?.konto?.filter { it.avdNr == avdelingDto.avdNr }?.map { it.asKonto() },
-            ePost = kontakter150?.enKontakt?.firstOrNull { it.avdNr == avdelingDto.avdNr && it.kodeKontaktType == "EPOS" }?.kontakt,
-            telefon = kontakter150?.enKontakt?.firstOrNull { it.avdNr == avdelingDto.avdNr && it.kodeKontaktType == "TLF" }?.kontakt,
-            mobil = kontakter150?.enKontakt?.firstOrNull { it.avdNr == avdelingDto.avdNr && it.kodeKontaktType == "MTLF" }?.kontakt,
+            idTSSEkstern = avdeling.idOffTSS,
+            avdelingNavn = avdeling.avdNavn?.trim(),
+            avdelingType = avdeling.typeAvd?.trim(),
+            avdelingsnr = avdeling.avdNr,
+            pAdresse = adresser.firstOrNull { it.kodeAdresseType == "PST" }?.asAdresse(),
+            aAdresse = adresser.firstOrNull { it.kodeAdresseType == "WP" }?.asAdresse(),
+            tAdresse = adresser.firstOrNull { it.kodeAdresseType == "TILL" }?.asAdresse(),
+            uAdresse = adresser.firstOrNull { it.kodeAdresseType == "UTL" }?.asAdresse(),
+            kontoer = kontoer.map { it.asKonto() },
+            ePost = kontakter.firstOrNull { it.avdNr == avdeling.avdNr && it.kodeKontaktType == "EPOS" }?.kontakt,
+            telefon = kontakter.firstOrNull { it.avdNr == avdeling.avdNr && it.kodeKontaktType == "TLF" }?.kontakt,
+            mobil = kontakter.firstOrNull { it.avdNr == avdeling.avdNr && it.kodeKontaktType == "MTLF" }?.kontakt,
         )
     }
 

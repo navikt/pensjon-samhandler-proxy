@@ -1,6 +1,5 @@
 package no.nav.pensjon_samhandler_proxy
 
-import no.nav.freg.tss.TOutputElementer
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -10,44 +9,21 @@ class SamhandlerController(
 ) {
     @GetMapping("/hentSamhandler/{tssId}")
     fun hentSamhandler(@PathVariable("tssId") tssId: String): Samhandler? {
-        return samhandlerViaKoe.hentSamhandlerXml(tssId, true)
+        return samhandlerViaKoe.hentSamhandler(tssId)
     }
 
-    @Deprecated("Bruk heller hentSamhandler")
-    @GetMapping("/hentSamhandler/raw/{tssId}")
-    fun hentSamhandlerRaw(@PathVariable("tssId") tssId: String): TOutputElementer? {
-        return samhandlerViaKoe.hentSamhandlerXmlRaw(tssId, true)
-    }
-
-    @GetMapping("/hentSamhandlerNavn/{tssId}")
-    fun hentSamhandlerNavn(@PathVariable("tssId") tssId: String): Samhandler? {
-        return samhandlerViaKoe.hentSamhandlerXml(tssId, false)
-    }
-
-    @Deprecated("Bruk heller hentSamhandlerNavn")
-    @GetMapping("/hentSamhandlerNavn/raw/{tssId}")
-    fun hentSamhandlerNavnRaw(@PathVariable("tssId") tssId: String): TOutputElementer? {
-        return samhandlerViaKoe.hentSamhandlerXmlRaw(tssId, false)
+    @GetMapping("/hentSamhandlerEnkel/{tssId}")
+    fun hentSamhandlerEnkel(@PathVariable("tssId") tssId: String): SamhandlerEnkel? {
+        return samhandlerViaKoe.hentSamhandlerEnkel(tssId)
     }
 
     @PostMapping("/finnSamhandler")
     fun finnSamhandler(@RequestBody soek: Soek): List<Samhandler> {
-        return samhandlerViaKoe.finnSamhandlerXml(
-            soek.navn,
-            soek.idType,
-            soek.offentligId,
-            soek.samhandlerType
-        )
-    }
-
-    @Deprecated("Bruk heller finnSamhandler")
-    @PostMapping("/finnSamhandler/raw")
-    fun finnSamhandlerRaw(@RequestBody soek: Soek): TOutputElementer? {
-        return samhandlerViaKoe.finnSamhandlerXmlRaw(
-            soek.navn,
-            soek.idType,
-            soek.offentligId,
-            soek.samhandlerType
+        return samhandlerViaKoe.finnSamhandler(
+            soek.navn?.takeIf { it.isNotBlank() },
+            soek.idType?.takeIf { it.isNotBlank() },
+            soek.offentligId?.takeIf { it.isNotBlank() },
+            soek.samhandlerType?.takeIf { it.isNotBlank() },
         )
     }
 
