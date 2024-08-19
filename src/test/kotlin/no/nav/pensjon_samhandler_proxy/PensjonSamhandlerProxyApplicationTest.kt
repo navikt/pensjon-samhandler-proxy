@@ -7,6 +7,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.http.MediaType
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.DynamicPropertyRegistry
@@ -89,13 +90,36 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
     }
 
     @Test
-    fun `kall med gyldig token gir ikke 200`() {
-        val listnerThread = lagListener()
+    fun `kall på hentSamhandler med gyldig token gir 200`() {
+        val listnerThread = lagListener("hentSamhandler.response.xml")
 
         val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
         webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
             .get()
-            .uri("/api/samhandler/hentSamhandlerNavn/{tssId}", mapOf("tssId" to "123"))
+            .uri("/api/samhandler/hentSamhandler/{tssId}", mapOf("tssId" to "123"))
+            .headers {
+                it.setBearerAuth(
+                    token.serialize()
+                )
+            }
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .json(lesResource("hentSamhandler.response.json"), true)
+
+        listnerThread.interrupt()
+    }
+
+    @Test
+    fun `kall på hentSamhandlerEnkel med gyldig token gir 200`() {
+        val listnerThread = lagListener("hentSamhandlerEnkel.response.xml")
+
+        val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
+        webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
+            .get()
+            .uri("/api/samhandler/hentSamhandlerEnkel/{tssId}", mapOf("tssId" to "123"))
             .headers {
                 it.setBearerAuth(
                     token.serialize()
@@ -104,53 +128,29 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
             .exchange()
             .expectStatus()
             .is2xxSuccessful()
+            .expectBody()
+            .json(lesResource("hentSamhandlerEnkel.response.json"), true)
 
         listnerThread.interrupt()
     }
 
-    private fun lagListener() =
+    private fun lagListener(responseFil: String) =
         thread {
-            val message = jmsTemplate.receive("DEV.QUEUE.1")!!
+            val message = jmsTemplate.receive("DEV.QUEUE.1")
+            print("Fikk melding $message")
+            if (message == null){
+                throw IllegalStateException("Melding var null")
+            }
 
             jmsTemplate.send(message.jmsReplyTo) {
-                it.createTextMessage(
-                    """
-                        <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-                        <tssSamhandlerData xmlns="http://www.rtv.no/NamespaceTSS">
-                            <tssInputData>
-                                <tssServiceRutine>
-                                    <samhandlerIDataB980>
-                                        <idOffTSS>80000748058</idOffTSS>
-                                        <hentNavn>J</hentNavn>
-                                        <brukerID>PP01</brukerID>
-                                    </samhandlerIDataB980>
-                                </tssServiceRutine>
-                            </tssInputData>
-                            <tssOutputData>
-                                <svarStatus>
-                                    <alvorligGrad>00</alvorligGrad>
-                                    <kodeMelding></kodeMelding>
-                                    <beskrMelding></beskrMelding>
-                                </svarStatus>
-                                <samhandlerODataB980>
-                                    <antIdenter>1</antIdenter>
-                                    <ident>
-                                        <idOff>3943</idOff>
-                                        <kodeIdentType>TPNR</kodeIdentType>
-                                        <kodeSamhType>TEPE</kodeSamhType>
-                                        <navnSamh>SKAGERAK ENERGI PENSJONSKASSE</navnSamh>
-                                        <avdelingsNr>01</avdelingsNr>
-                                        <offNrAvd></offNrAvd>
-                                        <avdelingsNavn>Skagerak Energi pensjonskasse</avdelingsNavn>
-                                        <idOffTSS>80000748058</idOffTSS>
-                                    </ident>
-                                </samhandlerODataB980>
-                            </tssOutputData>
-                        </tssSamhandlerData>
-                    """.trimIndent()
-                )
+                it.createTextMessage(lesResource(responseFil))
             }
         }
+
+    private fun lesResource(responseFil: String) =
+        javaClass.getResource("/no/nav/pensjon_samhandler_proxy/$responseFil")
+            ?.readText()
+            ?: throw IllegalStateException("Fant ikke responsefil $responseFil")
 
     companion object {
         @Container

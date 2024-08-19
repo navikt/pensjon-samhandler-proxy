@@ -1,0 +1,43 @@
+{
+  "navn": "STATENS PENSJONSKASSE FORVALTNINGS",
+  "sprak": "NO",
+  "samhandlerType": "AFPO",
+  "offentligId": "00974713683",
+  "idType": "ORG",
+  "avdelinger": [
+    {
+      "idTSSEkstern": "80000483597",
+      "avdelingNavn": "",
+      "avdelingType": "",
+      "avdelingsnr": "00",
+      "telefon": null,
+      "mobil": null,
+      "kontoer": [],
+      "epost": null,
+      "aadresse": {
+        "adresselinje1": "Verkstedveien 1",
+        "adresselinje2": null,
+        "adresselinje3": null,
+        "adresseTypekode": "WP",
+        "postNr": "0277",
+        "poststed": "OSLO",
+        "land": "NOR",
+        "kommuneNr": "0301",
+        "erGyldig": true
+      },
+      "padresse": {
+        "adresselinje1": "Postboks 10 Skøyen",
+        "adresselinje2": null,
+        "adresselinje3": null,
+        "adresseTypekode": "PST",
+        "postNr": "0212",
+        "poststed": "OSLO",
+        "land": "NOR",
+        "kommuneNr": "0301",
+        "erGyldig": true
+      },
+      "tadresse": null,
+      "uadresse": null
+    }
+  ]
+}
