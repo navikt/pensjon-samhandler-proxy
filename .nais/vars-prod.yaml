@@ -22,3 +22,6 @@ inboundRules:
   - application: "pensjon-psak"
     namespace: "pensjondeployer"
     cluster: "prod-fss"
+  - application: "skribenten-backend"
+    namespace: "pensjonsbrev"
+    cluster: "prod-gcp"

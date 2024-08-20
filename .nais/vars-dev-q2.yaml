@@ -28,3 +28,6 @@ inboundRules:
   - application: "pensjon-psak-q2"
     namespace: "pensjon-q2"
     cluster: "dev-gcp"
+  - application: "skribenten-backend"
+    namespace: "pensjonsbrev"
+    cluster: "dev-gcp"
