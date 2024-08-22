@@ -27,6 +27,18 @@ class SamhandlerController(
         )
     }
 
+    @PostMapping("/finnSamhandlerResponse")
+    fun finnSamhandlerResponse(@RequestBody soek: Soek): FinnSamhandlerResponse {
+        return FinnSamhandlerResponse(
+            samhandlerService.finnSamhandler(
+                soek.navn?.takeIf { it.isNotBlank() },
+                soek.idType?.takeIf { it.isNotBlank() },
+                soek.offentligId?.takeIf { it.isNotBlank() },
+                soek.samhandlerType?.takeIf { it.isNotBlank() },
+            )
+        )
+    }
+
     @GetMapping("/ping")
     fun ping() = "PONG"
 
@@ -35,5 +47,9 @@ class SamhandlerController(
         val samhandlerType: String?,
         val offentligId: String?,
         val idType: String?,
+    )
+
+    data class FinnSamhandlerResponse(
+        val samhandlerList: List<Samhandler>,
     )
 }
