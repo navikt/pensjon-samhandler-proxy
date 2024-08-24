@@ -31,3 +31,6 @@ inboundRules:
   - application: "skribenten-backend"
     namespace: "pensjonsbrev"
     cluster: "dev-gcp"
+  - application: "tp-q2"
+    namespace: "pensjonsamhandling"
+    cluster: "dev-fss"
