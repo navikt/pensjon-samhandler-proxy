@@ -7,6 +7,7 @@ data class Samhandler(
     val offentligId: String?,
     val idType: String?,
     val avdelinger: List<Avdeling>?,
+    val alternativeIder: List<AlternativId>?,
 )
 
 data class SamhandlerEnkel(
@@ -51,4 +52,9 @@ data class Adresse(
     val land: String?,
     val kommuneNr: String? = null,
     val erGyldig: Boolean? = null,
+)
+
+data class AlternativId(
+    val alternativId: String?,
+    val alternativIdKode: String?,
 )
