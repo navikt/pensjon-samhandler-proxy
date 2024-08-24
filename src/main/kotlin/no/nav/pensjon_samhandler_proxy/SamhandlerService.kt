@@ -68,12 +68,23 @@ class SamhandlerService(
 
         } else if (idType == null && offentligId == null && navn == null && samhandlerType != null) {
             //search in TSS, only with samhandlerType as input
-            kallSamhandler {
-                samhandlerIDataB940 = SamhandlerIDataB940Type().apply {
-                    kodeSamhType = samhandlerType
-                    brukerID = "PP01"
+            val samhandlere = ArrayList<Samhandler>()
+            for (index in 1 .. 100) {
+                val svar = kallSamhandler {
+                    samhandlerIDataB940 = SamhandlerIDataB940Type().apply {
+                        buffnr = index.toString()
+                        kodeSamhType = samhandlerType
+                        brukerID = "PP01"
+                    }
                 }
-            }?.samhandlerODataB940?.enkeltSamhandler?.map { it.toSamhandler() } ?: emptyList()
+
+                samhandlere.addAll(svar?.samhandlerODataB940?.enkeltSamhandler?.map { it.toSamhandler() } ?: emptyList())
+
+                if (svar?.svarStatus?.beskrMelding?.equals("Det finnes mer informasjon", ignoreCase = true) != true) {
+                    break
+                }
+            }
+            return samhandlere
         } else {
             //Ugyldig input. Kast exception
             throw RuntimeException("Ugyldig input")
