@@ -69,7 +69,7 @@ class SamhandlerService(
         } else if (idType == null && offentligId == null && navn == null && samhandlerType != null) {
             //search in TSS, only with samhandlerType as input
             val samhandlere = ArrayList<Samhandler>()
-            for (index in 1 .. 100) {
+            for (index in 1 .. 1000) {
                 val svar = kallSamhandler {
                     samhandlerIDataB940 = SamhandlerIDataB940Type().apply {
                         buffnr = index.toString()
