@@ -1,5 +1,6 @@
 package no.nav.pensjon_samhandler_proxy
 
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -8,13 +9,13 @@ class SamhandlerController(
     private val samhandlerService: SamhandlerService,
 ) {
     @GetMapping("/hentSamhandler/{tssId}")
-    fun hentSamhandler(@PathVariable("tssId") tssId: String): Samhandler? {
-        return samhandlerService.hentSamhandler(tssId)
+    fun hentSamhandler(@PathVariable("tssId") tssId: String): ResponseEntity<Samhandler> {
+        return ResponseEntity.ofNullable(samhandlerService.hentSamhandler(tssId))
     }
 
     @GetMapping("/hentSamhandlerEnkel/{tssId}")
-    fun hentSamhandlerEnkel(@PathVariable("tssId") tssId: String): SamhandlerEnkel? {
-        return samhandlerService.hentSamhandlerEnkel(tssId)
+    fun hentSamhandlerEnkel(@PathVariable("tssId") tssId: String): ResponseEntity<SamhandlerEnkel> {
+        return ResponseEntity.ofNullable(samhandlerService.hentSamhandlerEnkel(tssId))
     }
 
     @PostMapping("/finnSamhandler")
