@@ -147,6 +147,12 @@ class SamhandlerService(
                     this.kontakter150
                 )
             },
+            alternativeIder = alternativId111?.samhId?.map {
+                AlternativId(
+                    alternativId = it.idAlternativ,
+                    alternativIdKode = it.kodeAltIdentType,
+                )
+            },
         )
     }
 
@@ -172,7 +178,8 @@ class SamhandlerService(
                     avdelingsnr = avdelingsNr,
                     idTSSEkstern = idOffTSS,
                 )
-            )
+            ),
+            alternativeIder = emptyList(),
         )
     }
 
@@ -191,6 +198,7 @@ class SamhandlerService(
                     null,
                 )
             },
+            alternativeIder = emptyList(),
         )
     }
 
