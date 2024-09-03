@@ -18,6 +18,16 @@ class SamhandlerController(
         return ResponseEntity.ofNullable(samhandlerService.hentSamhandlerEnkel(tssId))
     }
 
+    @GetMapping("/hentAvdelingstype/{tssId}")
+    fun hentAvdelingstype(@PathVariable("tssId") tssId: String): ResponseEntity<HentAvdelingstypeResponse> {
+        return ResponseEntity.ofNullable(samhandlerService.hentAvdelingstype(tssId)?.let { HentAvdelingstypeResponse(it) })
+    }
+
+    @GetMapping("/hentOffentligId/{tssId}")
+    fun hentOffentligId(@PathVariable("tssId") tssId: String): ResponseEntity<HentOffentligIdResponse> {
+        return ResponseEntity.ofNullable(samhandlerService.hentOffentligId(tssId)?.let { HentOffentligIdResponse(it) })
+    }
+
     @PostMapping("/finnSamhandler")
     fun finnSamhandler(@RequestBody soek: Soek): FinnSamhandlerResponse {
         return FinnSamhandlerResponse(
@@ -42,5 +52,12 @@ class SamhandlerController(
 
     data class FinnSamhandlerResponse(
         val samhandlerList: List<Samhandler>,
+    )
+
+    data class HentAvdelingstypeResponse(
+        val avdelingstype: String
+    )
+    data class HentOffentligIdResponse(
+        val offentligId: String
     )
 }

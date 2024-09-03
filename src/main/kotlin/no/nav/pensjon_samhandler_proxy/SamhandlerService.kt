@@ -1,14 +1,14 @@
 package no.nav.pensjon_samhandler_proxy
 
+import jakarta.jms.Message
+import jakarta.jms.TextMessage
+import jakarta.xml.bind.JAXBContext
+import jakarta.xml.bind.Marshaller
 import no.nav.freg.tss.*
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Component
 import java.io.ByteArrayOutputStream
 import java.io.StringReader
-import jakarta.jms.Message
-import jakarta.jms.TextMessage
-import jakarta.xml.bind.JAXBContext
-import jakarta.xml.bind.Marshaller
 import javax.xml.stream.XMLInputFactory
 import javax.xml.transform.stream.StreamSource
 
@@ -34,6 +34,12 @@ class SamhandlerService(
             }
         }?.samhandlerODataB980?.ident?.first()?.toSamhandlerEnkel()
     }
+
+    fun hentAvdelingstype(tssId: String): String? =
+        hentSamhandler(tssId)?.avdelinger?.firstOrNull()?.avdelingType
+
+    fun hentOffentligId(tssId: String): String? =
+        hentSamhandler(tssId)?.offentligId
 
     fun finnSamhandler(
         navn: String?,
