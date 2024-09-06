@@ -99,7 +99,7 @@ jobs:
           VARS: '.nais/vars-prod.yaml'
 
   deploySandbox:
-    if: github.ref == 'refs/heads/sandbox'
+    if: github.ref == 'refs/heads/sandbox' || github.ref == 'refs/heads/main'
     permissions:
       contents: read
       id-token: write
