@@ -26,7 +26,7 @@
 		<dependency>
 			<groupId>ch.qos.logback.access</groupId>
 			<artifactId>tomcat</artifactId>
-			<version>2.0.2</version>
+			<version>2.0.3</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.tomcat</groupId>
