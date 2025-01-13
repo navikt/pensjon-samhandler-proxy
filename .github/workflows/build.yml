@@ -62,6 +62,7 @@ jobs:
           retention-days: 5
 
       - name: NAIS login
+        if: ${{ github.actor != 'dependabot[bot]' }}
         uses: nais/login@v0
         id: login
         with:
@@ -70,6 +71,7 @@ jobs:
           team: pensjondeployer
 
       - name: "Build and publish Docker image"
+        if: ${{ github.actor != 'dependabot[bot]' }}
         id: build_push
         uses: docker/build-push-action@v6
         with:
@@ -147,6 +149,7 @@ jobs:
           VARS: '.nais/vars-dev-${{matrix.env}}.yaml'
 
   attest-sign:
+    if: ${{ github.actor != 'dependabot[bot]' }}
     permissions:
       contents: read
       id-token: write
