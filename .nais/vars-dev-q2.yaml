@@ -19,8 +19,8 @@ inboundRules:
   - application: "azure-token-generator"
     namespace: "nais"
     cluster: "dev-gcp"
-  - application: "gosys-q2",
-    namespace: "isa",
+  - application: "gosys-q2"
+    namespace: "isa"
     cluster: "dev-fss"
   - application: "pensjon-pen-q2"
     namespace: "pensjon-q2"
