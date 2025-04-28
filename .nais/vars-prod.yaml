@@ -16,6 +16,9 @@ vault:
   srvpenmq: 'serviceuser/data/prod/srvpenmq'
 
 inboundRules:
+  - application: "gosys",
+    namespace: "isa",
+    cluster: "prod-fss"
   - application: "pensjon-pen"
     namespace: "pensjondeployer"
     cluster: "prod-fss"
