@@ -37,3 +37,6 @@ inboundRules:
   - application: "tp-q1"
     namespace: "pensjonsamhandling"
     cluster: "dev-fss"
+  - application: "gosys-q1"
+    namespace: "isa"
+    cluster: "dev-fss"
