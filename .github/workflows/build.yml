@@ -15,7 +15,7 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       image: "${{ steps.login.outputs.registry }}/${{ github.repository }}/pensjon-samhandler-proxy:${{ env.VERSION }}"
-      image-digest: ${{ steps.login.outputs.registry }}/${{ github.repository }}/pensjon-samhandler-proxy:@${{ steps.build_push.outputs.digest }}
+      image-digest: ${{ steps.login.outputs.registry }}/${{ github.repository }}/pensjon-samhandler-proxy@${{ steps.build_push.outputs.digest }}
 
     steps:
       - uses: actions/checkout@v4
