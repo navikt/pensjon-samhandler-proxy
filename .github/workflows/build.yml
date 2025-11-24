@@ -46,7 +46,7 @@ jobs:
           TZ: "Europe/Oslo"
 
       - name: Upload surefire reports on failure
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: surefire-reports
@@ -54,7 +54,7 @@ jobs:
           retention-days: 5
 
       - name: Upload HotSpot Fatal Error logs on failure
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: hotspot-fatal-error-logs
