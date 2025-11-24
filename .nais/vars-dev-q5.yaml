@@ -14,6 +14,7 @@ otel:
 
 vault:
   srvpenmq: 'serviceuser/data/dev/srvpenmq'
+  srvtss: 'serviceuser/data/dev/srv-pensjon-tss-samhandlerv2'
 
 inboundRules:
   - application: "pensjon-pen-q5"

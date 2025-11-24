@@ -66,3 +66,5 @@ spec:
     paths:
       - kvPath: "{{vault.srvpenmq}}"
         mountPath: "/secrets/srvpenmq"
+      - kvPath: "{{vault.srvtss}}"
+        mountPath: "/secrets/srvtss"
