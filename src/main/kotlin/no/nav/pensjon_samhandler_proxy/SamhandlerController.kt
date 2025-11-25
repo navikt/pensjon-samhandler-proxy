@@ -47,14 +47,14 @@ class SamhandlerController(
     }
 
     @GetMapping("/hentSamhandlerPostadresse/{tssId}")
-    fun hentSamhandlerPostadresse(@PathVariable("tssId") tssId: String): HentSamhandlerAdresseResponseDto? =
+    fun hentSamhandlerPostadresse(@PathVariable("tssId") tssId: String): HentSamhandlerAdresseResponseDto =
         try {
             samhandlerPort.hentSamhandlerPrioritertAdresse(
                 HentSamhandlerPrioritertAdresseRequest().apply {
                     this.ident = tssId
                     this.identKode = "TSS_EKSTERN_ID"
                 }
-            )?.let {
+            ).let {
                 HentSamhandlerAdresseResponseDto(
                     HentSamhandlerAdresseResponseDto.SamhandlerPostadresse(
                         navn = it.navn.trim(),
