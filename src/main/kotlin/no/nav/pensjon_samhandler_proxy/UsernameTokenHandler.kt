@@ -30,33 +30,35 @@ class UsernameTokenHandler(private val username: String, private val password: S
         } != null
     }
 
-    private fun createUsernameToken(): SOAPElement? =
-        SOAPFactory.newInstance()
-            .createElement(SOAPFactory.newInstance().createName("Security", WSSE, SECURITY_URL)).apply {
+    private fun createUsernameToken(): SOAPElement? {
+        val factory = SOAPFactory.newInstance()
+
+        return factory
+            .createElement(factory.createName("Security", WSSE, SECURITY_URL)).apply {
                 addNamespaceDeclaration("soapenc", "http://schemas.xmlsoap.org/soap/encoding/")
                 addNamespaceDeclaration("xsd", "http://www.w3.org/2001/XMLSchema")
                 addNamespaceDeclaration("xsi", "http://www.w3.org/2001/XMLSchema-instance")
 
                 addAttribute(
-                    SOAPFactory.newInstance()
+                    factory
                         .createName("mustUnderstand", "soapenv", "http://schemas.xmlsoap.org/soap/envelope/"), "1"
                 )
 
                 addChildElement(
-                    SOAPFactory.newInstance()
-                        .createElement(SOAPFactory.newInstance().createName("UsernameToken", WSSE, SECURITY_URL))
+                    factory
+                        .createElement(factory.createName("UsernameToken", WSSE, SECURITY_URL))
                         .apply {
                             addChildElement(
-                                SOAPFactory.newInstance()
-                                    .createElement(SOAPFactory.newInstance().createName("Username", WSSE, SECURITY_URL))
+                                factory
+                                    .createElement(factory.createName("Username", WSSE, SECURITY_URL))
                                     .apply { addTextNode(username) })
 
                             addChildElement(
-                                SOAPFactory.newInstance()
-                                    .createElement(SOAPFactory.newInstance().createName("Password", WSSE, SECURITY_URL))
+                                factory
+                                    .createElement(factory.createName("Password", WSSE, SECURITY_URL))
                                     .apply {
                                         addAttribute(
-                                            SOAPFactory.newInstance().createName("Type"),
+                                            factory.createName("Type"),
                                             "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"
                                         )
                                         addTextNode(password)
@@ -65,6 +67,7 @@ class UsernameTokenHandler(private val username: String, private val password: S
                         }
                 )
             }
+    }
 
     override fun handleFault(context: SOAPMessageContext?): Boolean = true
 

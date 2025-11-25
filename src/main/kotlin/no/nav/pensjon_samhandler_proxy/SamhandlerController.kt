@@ -70,7 +70,7 @@ class SamhandlerController(
         } catch (e: HentSamhandlerPrioritertAdresseSamhandlerIkkeFunnet) {
             HentSamhandlerAdresseResponseDto(HentSamhandlerAdresseResponseDto.FailureType.NOT_FOUND, e)
         } catch (e: Exception) {
-            logger.error("Feil ved henting av aamhandler prioritert adresse", e)
+            logger.error("Feil ved henting av samhandler prioritert adresse", e)
             HentSamhandlerAdresseResponseDto(HentSamhandlerAdresseResponseDto.FailureType.GENERISK, e)
         }
 
