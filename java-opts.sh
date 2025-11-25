@@ -23,3 +23,6 @@ export JAVA_OPTS="${JAVA_OPTS} ${JAVA_PROXY_OPTIONS}"
 
 export SRVPENMQ_USERNAME=$(cat /secrets/srvpenmq/username)
 export SRVPENMQ_PASSWORD=$(cat /secrets/srvpenmq/password)
+
+export SRVTSS_USERNAME=$(cat /secrets/srvtss/username)
+export SRVTSS_PASSWORD=$(cat /secrets/srvtss/password)

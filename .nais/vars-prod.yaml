@@ -14,6 +14,7 @@ otel:
 
 vault:
   srvpenmq: 'serviceuser/data/prod/srvpenmq'
+  srvtss: 'serviceuser/data/prod/srv-pensjon-tss-samhandlerv2'
 
 inboundRules:
   - application: "gosys"

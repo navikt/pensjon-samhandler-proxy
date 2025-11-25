@@ -22,6 +22,19 @@
 			<url>https://github-package-registry-mirror.gc.nav.no/cached/maven-release</url>
 		</repository>
 	</repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-bom</artifactId>
+                <version>4.1.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>ch.qos.logback.access</groupId>
@@ -44,11 +57,28 @@
 			<artifactId>mq-jms-spring-boot-starter</artifactId>
 			<version>3.5.7</version>
 		</dependency>
+        <dependency>
+            <groupId>no.nav.tjenestespesifikasjoner.pensjon</groupId>
+            <artifactId>samhandler-tjenestespesifikasjon</artifactId>
+            <version>1.2024.10.21-13.17-04e1c7bb6f55</version>
+        </dependency>
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
 			<artifactId>logstash-logback-encoder</artifactId>
 			<version>8.1</version>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>

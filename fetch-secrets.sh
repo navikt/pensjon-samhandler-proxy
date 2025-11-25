@@ -52,18 +52,14 @@ command -v kubectl >& /dev/null || (
 export VAULT_ADDR=https://vault.adeo.no
 
 while true; do
-  NAME="$(vault token lookup -format=json | jq '.data.display_name' -r; exit ${PIPESTATUS[0]})"
+	NAME="$(vault token lookup -format=json | jq '.data.display_name' -r; exit ${PIPESTATUS[0]})"
   ret=${PIPESTATUS[0]}
   if [ "$ret" -ne 0 ]; then
-    echo "Looks like you are not logged in to Vault."
-
-    read -p "Do you want to log in? (y/n) " -n 1 -r
+    read -p "Du er ikke logget inn i Vault. Ønsker du å logge inn? (J/n)" -n 1 -r -s
     echo    # (optional) move to a new line
-    if [[ $REPLY =~ ^[YyJj]$ ]]
-    then
+    if [[ $REPLY = "" || $REPLY =~ ^[YyJj\n]$ ]]; then
       vault login -method=oidc -no-print
     else
-      echo "Could not log in to Vault. Aborting."
       exit 1
     fi
   else
@@ -132,6 +128,9 @@ echo -n -e "\t- Servicebruker "
 
 echo "SRVPENMQ_USERNAME='$(vault kv get -field username -mount=serviceuser dev/srvpenmq)'" >> "${envfile}"
 echo "SRVPENMQ_PASSWORD='$(vault kv get -field password -mount=serviceuser dev/srvpenmq)'" >> "${envfile}"
+
+echo "SRVTSS_USERNAME='$(vault kv get -field username -mount=serviceuser dev/srv-pensjon-tss-samhandlerv2)'" >> "${envfile}"
+echo "SRVTSS_PASSWORD='$(vault kv get -field password -mount=serviceuser dev/srv-pensjon-tss-samhandlerv2)'" >> "${envfile}"
 
 echo -e "${bold}${white}✔${endcolor}${normal}"
 
