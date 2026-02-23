@@ -45,20 +45,21 @@ spec:
           namespace: {{rule.namespace}}
           cluster: {{rule.cluster}}
       {{/each}}
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: java
+      destinations:
+        - id: "grafana-lgtm"
+        - id: "elastic-apm"
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
   webproxy: true
   env:
     - name: "ENVIRONMENT_NAME"
       value: {{ app.env }}
-    - name: "OTEL_EXPORTER_OTLP_ENDPOINT"
-      value: "https://elastic-apm.adeo.no"
-    - name: "OTEL_METRICS_EXPORTER"
-      value: "otlp"
-    - name: "OTEL_LOGS_EXPORTER"
-      value: "{{otel.logs}}"
-    - name: "OTEL_RESOURCE_ATTRIBUTES"
-      value: "service.name=pensjon-samhandler-proxy,service.version={{version}},deployment.environment={{app.env}}"
-    - name: "OTEL_TRACES_EXPORTER"
-      value: "otlp"
     - name: SPRING_PROFILES_ACTIVE
       value: {{ app.profile }}
   vault:
