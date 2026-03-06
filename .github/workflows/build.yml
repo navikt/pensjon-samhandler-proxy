@@ -73,7 +73,7 @@ jobs:
       - name: "Build and publish Docker image"
         if: ${{ github.actor != 'dependabot[bot]' }}
         id: build_push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile
