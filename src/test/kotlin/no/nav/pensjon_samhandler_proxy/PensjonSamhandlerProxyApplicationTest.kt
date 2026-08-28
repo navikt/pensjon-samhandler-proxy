@@ -1,7 +1,14 @@
 package no.nav.pensjon_samhandler_proxy
 
 import no.nav.security.mock.oauth2.MockOAuth2Server
-import org.junit.jupiter.api.Disabled
+import no.nav.virksomhet.part.samhandler.v2.Adresse
+import no.nav.virksomhet.part.samhandler.v2.Land
+import no.nav.virksomhet.tjenester.samhandler.meldinger.v2.HentSamhandlerPrioritertAdresseResponse
+import no.nav.virksomhet.tjenester.samhandler.v2.binding.Samhandler
+import org.apache.cxf.jaxws.JaxWsServerFactoryBean
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +25,7 @@ import org.testcontainers.containers.wait.strategy.Wait.forLogMessage
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
+import java.net.ServerSocket
 import java.time.Duration
 import java.time.Duration.ofMinutes
 import kotlin.concurrent.thread
@@ -29,9 +37,8 @@ import kotlin.concurrent.thread
         "management.health.livenessstate.enabled=true",
         "management.health.readinessstate.enabled=true",
         "management.endpoint.health.probes.enabled=true",
-        "tss.samhandlerv2.endpoint.url=http://localhost:0/mock",
-        "tss.samhandlerv2.serviceuser.username=test",
-        "tss.samhandlerv2.serviceuser.password=test",
+        "tss.samhandlerv2.serviceuser.username=testbruker",
+        "tss.samhandlerv2.serviceuser.password=testpassord",
     ]
 )
 @ContextConfiguration(
@@ -46,6 +53,81 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
     val webClient: WebTestClient,
     val jmsTemplate: JmsTemplate,
 ) {
+    @BeforeEach
+    fun setUpFakeSamhandlerV2Service() {
+        fakeSamhandlerV2Service.reset()
+        capturingUsernameTokenHandler.reset()
+    }
+
+    @Test
+    fun `kall på hentSamhandlerPostadresse med gyldig token gir 200 og sender riktig wsse UsernameToken`() {
+        fakeSamhandlerV2Service.nestePrioritertAdresseSvar = HentSamhandlerPrioritertAdresseResponse().apply {
+            navn = "STATENS PENSJONSKASSE FORVALTNINGS"
+            postadresse = Adresse().apply {
+                adresselinje1 = "Postboks 10 Skøyen"
+                postnr = "0212"
+                poststed = "OSLO"
+                land = Land().apply { kode = "NOR" }
+            }
+        }
+
+        val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
+        webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
+            .get()
+            .uri("/api/samhandler/hentSamhandlerPostadresse/{tssId}", mapOf("tssId" to "80000483597"))
+            .headers { it.setBearerAuth(token.serialize()) }
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .jsonPath("$.adresse.navn").isEqualTo("STATENS PENSJONSKASSE FORVALTNINGS")
+            .jsonPath("$.adresse.linje1").isEqualTo("Postboks 10 Skøyen")
+            .jsonPath("$.adresse.postnr").isEqualTo("0212")
+            .jsonPath("$.adresse.poststed").isEqualTo("OSLO")
+            .jsonPath("$.adresse.land").isEqualTo("NOR")
+            .jsonPath("$.failureType").doesNotExist()
+
+        assertEquals("80000483597", fakeSamhandlerV2Service.sisteRequest?.ident)
+
+        assertEquals("testbruker", capturingUsernameTokenHandler.sistMottattBrukernavn)
+        assertEquals("testpassord", capturingUsernameTokenHandler.sistMottattPassord)
+    }
+
+    @Test
+    fun `kall på hentSamhandlerPostadresse hvor samhandler ikke finnes gir NOT_FOUND`() {
+        fakeSamhandlerV2Service.samhandlerIkkeFunnet = true
+
+        val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
+        webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
+            .get()
+            .uri("/api/samhandler/hentSamhandlerPostadresse/{tssId}", mapOf("tssId" to "finnes-ikke"))
+            .headers { it.setBearerAuth(token.serialize()) }
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .jsonPath("$.failureType").isEqualTo("NOT_FOUND")
+    }
+
+    @Test
+    fun `kall på hentSamhandlerPostadresse med uventet feil fra TSS gir GENERISK`() {
+        fakeSamhandlerV2Service.kastUventetFeil = true
+
+        val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
+        webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
+            .get()
+            .uri("/api/samhandler/hentSamhandlerPostadresse/{tssId}", mapOf("tssId" to "123"))
+            .headers { it.setBearerAuth(token.serialize()) }
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .jsonPath("$.failureType").isEqualTo("GENERISK")
+    }
+
     @Test
     fun kallTilTssFeilerMedManglendeSvar() {
         assertThrows<IkkeSvarFraTssException> { samhandlerService.hentSamhandlerEnkel("123") }
@@ -169,6 +251,22 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
             )
             .withReuse(true)!!
 
+        @JvmStatic
+        val fakeSamhandlerV2Service = FakeSamhandlerV2Service()
+
+        @JvmStatic
+        val capturingUsernameTokenHandler = CapturingUsernameTokenHandler()
+
+        @JvmStatic
+        private val fakeSamhandlerV2ServerPort: Int = ServerSocket(0).use { it.localPort }
+
+        @JvmStatic
+        private val fakeSamhandlerV2Server = JaxWsServerFactoryBean().apply {
+            address = "http://localhost:$fakeSamhandlerV2ServerPort/samhandlerv2"
+            serviceClass = Samhandler::class.java
+            serviceBean = fakeSamhandlerV2Service
+            handlers = listOf(capturingUsernameTokenHandler)
+        }.create()!!
 
         @DynamicPropertySource
         @JvmStatic
@@ -182,6 +280,16 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
             registry.add("ibm.mq.password") { "passw0rd" }
 
             registry.add("samhandler.xml.queueName") { "DEV.QUEUE.1" }
+
+            registry.add("tss.samhandlerv2.endpoint.url") {
+                "http://localhost:$fakeSamhandlerV2ServerPort/samhandlerv2"
+            }
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun stoppFakeSamhandlerV2Server() {
+            fakeSamhandlerV2Server.destroy()
         }
     }
 }
