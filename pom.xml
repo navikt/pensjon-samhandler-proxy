@@ -60,7 +60,7 @@
         <dependency>
             <groupId>no.nav.tjenestespesifikasjoner.pensjon</groupId>
             <artifactId>samhandler-tjenestespesifikasjon</artifactId>
-            <version>1.2024.10.21-13.17-04e1c7bb6f55</version>
+            <version>1.2026.05.06-14.07-32c3d83eb9ea</version>
         </dependency>
 		<dependency>
 			<groupId>net.logstash.logback</groupId>
