@@ -19,6 +19,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.http.MediaType
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.jms.core.MessageCreator
@@ -59,6 +60,7 @@ import java.time.Duration
         MockOAuth2ServerInitializer::class,
     ]
 )
+@AutoConfigureWebTestClient
 class PensjonSamhandlerProxyMockkJmsApplicationTest @Autowired constructor(
     val samhandlerService: SamhandlerService,
     val mockOAuth2Server: MockOAuth2Server,
