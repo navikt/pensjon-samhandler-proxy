@@ -29,6 +29,9 @@ import kotlin.concurrent.thread
         "management.health.livenessstate.enabled=true",
         "management.health.readinessstate.enabled=true",
         "management.endpoint.health.probes.enabled=true",
+        "tss.samhandlerv2.endpoint.url=http://localhost:0/mock",
+        "tss.samhandlerv2.serviceuser.username=test",
+        "tss.samhandlerv2.serviceuser.password=test",
     ]
 )
 @ContextConfiguration(
@@ -37,7 +40,6 @@ import kotlin.concurrent.thread
     ]
 )
 @Testcontainers
-@Disabled("Avklar om vi har lisens til å kjøre MQ dev container på GitHub, hvis ikke så kan dette kun kjøres på utviklermaskin")
 class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
     val samhandlerService: SamhandlerService,
     val mockOAuth2Server: MockOAuth2Server,
@@ -138,7 +140,7 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
         thread {
             val message = jmsTemplate.receive("DEV.QUEUE.1")
             print("Fikk melding $message")
-            if (message == null){
+            if (message == null) {
                 throw IllegalStateException("Melding var null")
             }
 

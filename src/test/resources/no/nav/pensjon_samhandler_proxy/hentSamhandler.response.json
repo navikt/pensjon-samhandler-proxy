@@ -39,5 +39,11 @@
       "tadresse": null,
       "uadresse": null
     }
+  ],
+  "alternativeIder": [
+    {
+      "alternativId": "00974713683",
+      "alternativIdKode": "ORG"
+    }
   ]
 }
