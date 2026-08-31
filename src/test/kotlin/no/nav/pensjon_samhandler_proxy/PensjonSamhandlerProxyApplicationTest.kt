@@ -197,6 +197,29 @@ class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
     }
 
     @Test
+    fun `kall på hentSamhandler med konto gir 200 og korrekt kontodata`() {
+        val listnerThread = lagListener("hentSamhandlerMedKonto.response.xml")
+
+        val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
+        webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
+            .get()
+            .uri("/api/samhandler/hentSamhandler/{tssId}", mapOf("tssId" to "123"))
+            .headers {
+                it.setBearerAuth(
+                    token.serialize()
+                )
+            }
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .json(lesResource("hentSamhandlerMedKonto.response.json"), true)
+
+        listnerThread.interrupt()
+    }
+
+    @Test
     fun `kall på hentSamhandlerEnkel med gyldig token gir 200`() {
         val listnerThread = lagListener("hentSamhandlerEnkel.response.xml")
 

@@ -1,0 +1,69 @@
+{
+  "navn": "STATENS PENSJONSKASSE FORVALTNINGS",
+  "sprak": "NO",
+  "samhandlerType": "AFPO",
+  "offentligId": "00974713683",
+  "idType": "ORG",
+  "avdelinger": [
+    {
+      "idTSSEkstern": "80000483597",
+      "avdelingNavn": "",
+      "avdelingType": "",
+      "avdelingsnr": "00",
+      "telefon": null,
+      "mobil": null,
+      "kontoer": [
+        {
+          "kontoType": "BANK",
+          "kontonummer": "12345678903",
+          "banknavn": "DNB",
+          "bankkode": "DNBANOKK",
+          "swiftkode": "DNBANOKKXXX",
+          "valuta": "NOK",
+          "bankadresse": {
+            "adresselinje1": null,
+            "adresselinje2": null,
+            "adresselinje3": null,
+            "adresseTypekode": null,
+            "postNr": null,
+            "poststed": null,
+            "land": "NOR",
+            "kommuneNr": null,
+            "erGyldig": null
+          }
+        }
+      ],
+      "epost": null,
+      "aadresse": {
+        "adresselinje1": "Verkstedveien 1",
+        "adresselinje2": null,
+        "adresselinje3": null,
+        "adresseTypekode": "WP",
+        "postNr": "0277",
+        "poststed": "OSLO",
+        "land": "NOR",
+        "kommuneNr": "0301",
+        "erGyldig": true
+      },
+      "padresse": {
+        "adresselinje1": "Postboks 10 Skøyen",
+        "adresselinje2": null,
+        "adresselinje3": null,
+        "adresseTypekode": "PST",
+        "postNr": "0212",
+        "poststed": "OSLO",
+        "land": "NOR",
+        "kommuneNr": "0301",
+        "erGyldig": true
+      },
+      "tadresse": null,
+      "uadresse": null
+    }
+  ],
+  "alternativeIder": [
+    {
+      "alternativId": "00974713683",
+      "alternativIdKode": "ORG"
+    }
+  ]
+}
