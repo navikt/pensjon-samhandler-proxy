@@ -1,5 +1,7 @@
 package no.nav.pensjon_samhandler_proxy
 
+import com.fasterxml.jackson.annotation.JsonProperty
+
 data class Samhandler(
     val navn: String?,
     val sprak: String? = null,
@@ -22,14 +24,14 @@ data class Avdeling(
     val avdelingNavn: String?,
     val avdelingType: String? = null,
     val avdelingsnr: String?,
-    val ePost: String? = null,
+    @get:JsonProperty("epost") val ePost: String? = null,
     val telefon: String? = null,
     val mobil: String? = null,
     val kontoer: List<Konto>? = null,
-    val aAdresse: Adresse? = null,
-    val pAdresse: Adresse? = null,
-    val tAdresse: Adresse? = null,
-    val uAdresse: Adresse? = null,
+    @get:JsonProperty("aadresse") val aAdresse: Adresse? = null,
+    @get:JsonProperty("padresse") val pAdresse: Adresse? = null,
+    @get:JsonProperty("tadresse") val tAdresse: Adresse? = null,
+    @get:JsonProperty("uadresse") val uAdresse: Adresse? = null,
 )
 
 data class Konto(

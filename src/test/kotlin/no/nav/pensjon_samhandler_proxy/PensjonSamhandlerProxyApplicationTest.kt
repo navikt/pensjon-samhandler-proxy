@@ -14,6 +14,7 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
+import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
 import org.springframework.http.MediaType
 import org.springframework.jms.core.JmsTemplate
 import org.springframework.test.context.ContextConfiguration
@@ -46,6 +47,7 @@ import kotlin.concurrent.thread
         MockOAuth2ServerInitializer::class,
     ]
 )
+@AutoConfigureWebTestClient
 @Testcontainers
 class PensjonSamhandlerProxyApplicationTest @Autowired constructor(
     val samhandlerService: SamhandlerService,
