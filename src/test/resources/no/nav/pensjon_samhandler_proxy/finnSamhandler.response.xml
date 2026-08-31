@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tssSamhandlerData xmlns="http://www.rtv.no/NamespaceTSS">
+    <tssInputData>
+        <tssServiceRutine>
+            <samhandlerIDataB98A>
+                <navnSamh>Skagerak</navnSamh>
+                <kodeSamhType>TEPE</kodeSamhType>
+                <delNavn>N</delNavn>
+                <brukerID>PP01</brukerID>
+                <aksjonsKode>A</aksjonsKode>
+                <aksjonsKode2>0</aksjonsKode2>
+            </samhandlerIDataB98A>
+        </tssServiceRutine>
+    </tssInputData>
+    <tssOutputData>
+        <svarStatus>
+            <alvorligGrad>00</alvorligGrad>
+            <kodeMelding></kodeMelding>
+            <beskrMelding></beskrMelding>
+        </svarStatus>
+        <samhandlerODataB982>
+            <antIdenter>1</antIdenter>
+            <ident>
+                <idOff>3943</idOff>
+                <kodeIdentType>TPNR</kodeIdentType>
+                <kodeSamhType>TEPE</kodeSamhType>
+                <navnSamh>SKAGERAK ENERGI PENSJONSKASSE</navnSamh>
+                <avdelingsNr>01</avdelingsNr>
+                <offNrAvd></offNrAvd>
+                <avdelingsNavn>Skagerak Energi pensjonskasse</avdelingsNavn>
+                <avdelingsType>HOVK</avdelingsType>
+                <idOffTSS>80000748058</idOffTSS>
+            </ident>
+        </samhandlerODataB982>
+    </tssOutputData>
+</tssSamhandlerData>

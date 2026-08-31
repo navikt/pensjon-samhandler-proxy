@@ -1,0 +1,28 @@
+{
+  "samhandlerList": [
+    {
+      "navn": "SKAGERAK ENERGI PENSJONSKASSE",
+      "sprak": null,
+      "samhandlerType": "TEPE",
+      "offentligId": "3943",
+      "idType": "TPNR",
+      "avdelinger": [
+        {
+          "idTSSEkstern": "80000748058",
+          "avdelingNavn": "Skagerak Energi pensjonskasse",
+          "avdelingType": "HOVK",
+          "avdelingsnr": "01",
+          "telefon": null,
+          "mobil": null,
+          "kontoer": null,
+          "epost": null,
+          "aadresse": null,
+          "padresse": null,
+          "tadresse": null,
+          "uadresse": null
+        }
+      ],
+      "alternativeIder": []
+    }
+  ]
+}
