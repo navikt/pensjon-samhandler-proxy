@@ -230,6 +230,66 @@ class PensjonSamhandlerProxyMockkJmsApplicationTest @Autowired constructor(
             .json(lesResource("hentSamhandlerEnkel.response.json"), true)
     }
 
+    @Test
+    fun `kall på hentAvdelingstype med gyldig token gir 200 og eksakt json payload`() {
+        mockJmsSvar("hentSamhandler.response.xml")
+
+        val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
+        webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
+            .get()
+            .uri("/api/samhandler/hentAvdelingstype/{tssId}", mapOf("tssId" to "123"))
+            .headers { it.setBearerAuth(token.serialize()) }
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .json(lesResource("hentAvdelingstype.response.json"), true)
+    }
+
+    @Test
+    fun `kall på hentOffentligId med gyldig token gir 200 og eksakt json payload`() {
+        mockJmsSvar("hentSamhandler.response.xml")
+
+        val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
+        webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
+            .get()
+            .uri("/api/samhandler/hentOffentligId/{tssId}", mapOf("tssId" to "123"))
+            .headers { it.setBearerAuth(token.serialize()) }
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .json(lesResource("hentOffentligId.response.json"), true)
+    }
+
+    @Test
+    fun `kall på finnSamhandler med gyldig token gir 200 og eksakt json payload`() {
+        mockJmsSvar("finnSamhandler.response.xml")
+
+        val token = mockOAuth2Server.issueToken("issuer1", "foo", audience = "acceptedAudience")
+        webClient.mutate().responseTimeout(Duration.ofSeconds(30)).build()
+            .post()
+            .uri("/api/samhandler/finnSamhandler")
+            .headers { it.setBearerAuth(token.serialize()) }
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .bodyValue(
+                mapOf(
+                    "navn" to "Skagerak",
+                    "samhandlerType" to "TEPE",
+                    "offentligId" to null,
+                    "idType" to null,
+                )
+            )
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .json(lesResource("finnSamhandler.response.json"), true)
+    }
+
     private fun mockJmsSvar(responseFil: String) {
         val svar = mockk<TextMessage>(relaxed = true) {
             every { text } returns lesResource(responseFil)
