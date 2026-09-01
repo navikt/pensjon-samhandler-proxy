@@ -11,11 +11,7 @@ ENV LOGGING_CONFIG=classpath:logback-nais.xml
 ENV MAIN_CLASS=no.nav.pensjon_samhandler_proxy.PensjonSamhandlerProxyApplication
 ENV TZ="Europe/Oslo"
 
-COPY java-opts.sh .
-
-RUN chmod +x java-opts.sh
-
 COPY target/pensjon-samhandler-proxy*jar app.jar
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["bash", "-c", "source ./java-opts.sh && exec java ${DEFAULT_JVM_OPTS} ${JAVA_OPTS} -jar app.jar ${RUNTIME_OPTS} $@"]
+CMD ["bash", "-c", "exec java ${DEFAULT_JVM_OPTS} ${JAVA_OPTS} -jar app.jar ${RUNTIME_OPTS} $@"]
