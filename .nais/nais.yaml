@@ -59,6 +59,8 @@ spec:
   env:
     - name: "ENVIRONMENT_NAME"
       value: {{ app.env }}
+    - name: "JDK_JAVA_OPTIONS"
+      value: "$(JAVA_PROXY_OPTIONS)"
     - name: SPRING_PROFILES_ACTIVE
       value: {{ app.profile }}
   vault:
