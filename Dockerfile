@@ -1,9 +1,4 @@
-FROM eclipse-temurin:25-jre
-
-RUN apt-get update && apt-get install -y \
-  curl \
-  dumb-init \
-  && rm -rf /var/lib/apt/lists/*
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/jre:openjdk-25
 
 WORKDIR /app
 
@@ -13,5 +8,4 @@ ENV TZ="Europe/Oslo"
 
 COPY target/pensjon-samhandler-proxy*jar app.jar
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["bash", "-c", "exec java ${DEFAULT_JVM_OPTS} ${JAVA_OPTS} -jar app.jar ${RUNTIME_OPTS} $@"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
