@@ -61,7 +61,7 @@ jobs:
       - name: "Build and publish Docker image"
         if: ${{ github.actor != 'dependabot[bot]' }}
         id: docker_push
-        uses: nais/docker-build-push@v0
+        uses: nais/docker-build-push@v1
         with:
           team: pensjondeployer
           tag: ${{ env.VERSION }}
